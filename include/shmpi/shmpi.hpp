@@ -13,13 +13,13 @@ public:
 	virtual int allocate() = 0;
 
 	// getter
-	virtual void* get_ptr() const = 0;
+	virtual void* get_ptr(const unsigned buffer_id) const = 0;
 
 	// Get data from device
-	virtual void read_from_device(const std::size_t offset, const std::size_t count) = 0;
+	virtual void read_from_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) = 0;
 
 	// Send data to device
-	virtual void write_to_device(const std::size_t offset, const std::size_t count) = 0;
+	virtual void write_to_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) = 0;
 
 	std::size_t get_buffer_count() const {return buffer_count;}
 };
@@ -43,7 +43,6 @@ int shmpi_recv(
 		const int dest,
 		const int tag,
 		MPI_Comm comm,
-		MPI_Status* mpi_status,
 		const std::size_t buffer_count_arg = 0u
 		);
 } // namespace shmpi
