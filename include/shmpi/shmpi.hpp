@@ -43,7 +43,6 @@ int shmpi_recv(
 		const int dest,
 		const int tag,
 		MPI_Comm comm,
-		MPI_Status* mpi_status,
 		const std::size_t buffer_count_arg = 0u
 		);
 } // namespace shmpi
