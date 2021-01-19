@@ -33,8 +33,7 @@ int shmpi_send(
 		const MPI_Datatype data_type,
 		const int dest,
 		const int tag,
-		MPI_Comm comm,
-		const std::size_t buffer_count_arg = 0u
+		MPI_Comm comm
 		);
 
 int shmpi_recv(
@@ -44,10 +43,8 @@ int shmpi_recv(
 		const MPI_Datatype data_type,
 		const int dest,
 		const int tag,
-		MPI_Comm comm,
-		const std::size_t buffer_count_arg = 0u
+		MPI_Comm comm
 		);
-		const std::size_t buffer_count_arg = 0u
 		);
 } // namespace shmpi
 #endif
