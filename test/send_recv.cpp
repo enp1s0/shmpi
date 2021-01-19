@@ -5,32 +5,33 @@
 
 template <class T>
 class cpu_buffer : public shmpi::buffer {
-	std::unique_ptr<T[]> data;
+	std::unique_ptr<T[]> data[2];
 	T* org_ptr;
 public:
 	cpu_buffer(const std::size_t buffer_count) : shmpi::buffer(buffer_count) {}
 	int allocate() {
 		try {
-		data = std::unique_ptr<T[]>(new T[shmpi::buffer::buffer_count]);
+			data[0] = std::unique_ptr<T[]>(new T[shmpi::buffer::buffer_count]);
+			data[1] = std::unique_ptr<T[]>(new T[shmpi::buffer::buffer_count]);
 		} catch(const std::exception& e) {
 			return 1;
 		}
 		return 0;
 	}
 
-	void* get_ptr() const {
-		return data.get();
+	void* get_ptr(const unsigned buffer_id) const {
+		return data[buffer_id].get();
 	}
 
-	void read_from_device(const std::size_t offset, const std::size_t count) {
+	void read_from_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
 		for (std::size_t i = 0; i < count; i++) {
-			data.get()[i] = org_ptr[offset + i];
+			data[buffer_id].get()[i] = org_ptr[offset + i];
 		}
 	}
 
-	void write_to_device(const std::size_t offset, const std::size_t count) {
+	void write_to_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
 		for (std::size_t i = 0; i < count; i++) {
-			org_ptr[offset + i] = data.get()[i];
+			org_ptr[offset + i] = data[buffer_id].get()[i];
 		}
 	}
 
@@ -40,7 +41,7 @@ public:
 };
 
 constexpr std::size_t N = 1lu << 30;
-constexpr std::size_t buffer_size = 1lu << 10;
+constexpr std::size_t buffer_size = 1lu << 20;
 
 int main(int argc, char** argv) {
 	MPI_Init(&argc, &argv);
@@ -54,6 +55,8 @@ int main(int argc, char** argv) {
 		std::printf("# N      : %lu\n", N);
 		std::printf("# Buffer : %lu\n", buffer_size);
 	}
+
+	MPI_Barrier(MPI_COMM_WORLD);
 
 	std::printf("[%d/%d]: Allocating test array\n", rank, nprocs);
 	std::unique_ptr<double[]> test_array(new double [N]);
@@ -73,7 +76,7 @@ int main(int argc, char** argv) {
 		std::printf("[%d/%d]: SEND Done\n", rank, nprocs);
 	} else {
 		std::printf("[%d/%d]: Start RECV\n", rank, nprocs);
-		shmpi::shmpi_recv(&buffer, 0, N, MPI_UINT64_T, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		shmpi::shmpi_recv(&buffer, 0, N, MPI_UINT64_T, 0, 0, MPI_COMM_WORLD);
 		std::printf("[%d/%d]: RECV Done\n", rank, nprocs);
 		std::printf("[%d/%d]: Validate test array values\n", rank, nprocs);
 		double error = 0.0;
