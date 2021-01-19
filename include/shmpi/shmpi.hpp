@@ -45,6 +45,15 @@ int shmpi_recv(
 		const int tag,
 		MPI_Comm comm
 		);
+
+int shmpi_allreduce(
+		shmpi::buffer* const send_buffer,
+		const std::size_t offset_send,
+		shmpi::buffer* const recv_buffer,
+		const std::size_t offset_recv,
+		const std::size_t count,
+		const MPI_Datatype data_type,
+		const MPI_Op op
 		);
 } // namespace shmpi
 #endif
