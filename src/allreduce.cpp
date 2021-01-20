@@ -12,8 +12,8 @@ int shmpi::shmpi_allreduce(
 		const MPI_Op op,
 		MPI_Comm mpi_comm
 		) {
-	const auto buffer_count = std::min(send_buffer->get_buffer_count(), recv_buffer->get_buffer_count());
-	
+	const auto buffer_count = (send_buffer == shmpi::shmpi_in_place) ? recv_buffer->get_buffer_count() : std::min(send_buffer->get_buffer_count(), recv_buffer->get_buffer_count());
+
 	if (buffer_count >= count) {
 		auto mpi_send_ptr = (send_buffer == shmpi::shmpi_in_place) ? MPI_IN_PLACE : send_buffer->get_ptr(0);
 		auto send_shmpi_ptr = (send_buffer == shmpi::shmpi_in_place) ? recv_buffer : send_buffer;
@@ -25,7 +25,7 @@ int shmpi::shmpi_allreduce(
 			return stat;
 		}
 
-		recv_buffer->write_to_device(0, offset, count);
+		recv_buffer->write_to_device(0, offset_recv, count);
 		return MPI_SUCCESS;
 	}
 
