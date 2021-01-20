@@ -7,7 +7,7 @@
 constexpr std::size_t N = 1lu << 25;
 constexpr std::size_t buffer_count = 1lu << 20;
 
-void allreduce_test_0(const int rank, const int nprocs) {
+void allreduce_test_0(const std::size_t N, const std::size_t buffer_count, const int rank, const int nprocs) {
 	if (rank == 0) {
 		std::printf("-----\n");
 		std::printf("# test   : %s / %s\n", __FILE__, __func__);
@@ -45,7 +45,7 @@ void allreduce_test_0(const int rank, const int nprocs) {
 	MPI_Barrier(MPI_COMM_WORLD);
 }
 
-void allreduce_test_1_in_place(const int rank, const int nprocs) {
+void allreduce_test_1_in_place(const std::size_t N, const std::size_t buffer_count, const int rank, const int nprocs) {
 	if (rank == 0) {
 		std::printf("-----\n");
 		std::printf("# test   : %s / %s\n", __FILE__, __func__);
@@ -86,8 +86,10 @@ int main(int argc, char** argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-	allreduce_test_0(rank, nprocs);
-	allreduce_test_1_in_place(rank, nprocs);
+	allreduce_test_0(N, buffer_count, rank, nprocs);
+	allreduce_test_0(buffer_count / 2, buffer_count, rank, nprocs);
+	allreduce_test_1_in_place(N, buffer_count, rank, nprocs);
+	allreduce_test_1_in_place(buffer_count / 2, buffer_count, rank, nprocs);
 
 	MPI_Finalize();
 }
