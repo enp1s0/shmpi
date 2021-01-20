@@ -1,6 +1,6 @@
 # Small Host MPI
 
-This is a library for small host heterogeneous environment.
+This is a framework for small host heterogeneous environment.
 
 ## Requirements
 - MPI (We tests with Open MPI)
@@ -24,7 +24,7 @@ make
 
 3. Link to your program
 ```
-g++ -L/path/to/shmpi/lib -lshmpi ...
+g++ -I/path/to/shmpi/include -L/path/to/shmpi/lib -lshmpi ...
 ```
 
 ## License

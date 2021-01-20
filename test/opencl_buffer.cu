@@ -43,6 +43,7 @@ int main(int argc, char** argv) {
 	}
 
 	cl_queue.enqueueWriteBuffer(cl_buffer, true, 0, N * sizeof(double), test_array.get());
+	cl_queue.finish();
 
 	// initialize shmpi buffer
 	shmpi::opencl_buffer<double> buffer(buffer_count, cl_queue);
