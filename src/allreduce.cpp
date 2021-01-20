@@ -76,5 +76,5 @@ int shmpi::shmpi_allreduce(
 	}
 	recv_buffer->write_to_device(b % 2, offset_recv + b * buffer_count, buffer_count);
 
-	return stat;
+	return MPI_SUCCESS;
 }
