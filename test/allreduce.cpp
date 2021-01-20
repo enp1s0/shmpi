@@ -9,6 +9,7 @@ constexpr std::size_t buffer_count = 1lu << 20;
 
 void allreduce_test_0(const int rank, const int nprocs) {
 	if (rank == 0) {
+		std::printf("-----\n");
 		std::printf("# test   : %s / %s\n", __FILE__, __func__);
 		std::printf("# N      : %lu\n", N);
 		std::printf("# Buffer : %lu\n", buffer_count);
@@ -41,6 +42,41 @@ void allreduce_test_0(const int rank, const int nprocs) {
 		error = std::max(std::abs(diff), error);
 	}
 	std::printf("[%3d/%3d] : error = %e\n", rank, nprocs, error);
+	MPI_Barrier(MPI_COMM_WORLD);
+}
+
+void allreduce_test_1_in_place(const int rank, const int nprocs) {
+	if (rank == 0) {
+		std::printf("-----\n");
+		std::printf("# test   : %s / %s\n", __FILE__, __func__);
+		std::printf("# N      : %lu\n", N);
+		std::printf("# Buffer : %lu\n", buffer_count);
+	}
+	std::unique_ptr<double[]> test_array(new double[N]);
+
+	mtk::test::cpu_buffer<double> buffer(buffer_count);
+	buffer.allocate();
+	buffer.set_org_ptr(test_array.get());
+
+	// Init test array
+	for (std::size_t i = 0; i < N; i++) {
+		test_array.get()[i] = rank + 1;
+	}
+
+	// Call allreduce
+	std::printf("[%3d/%3d] : Start Allreduce\n", rank, nprocs);
+	shmpi::shmpi_allreduce(shmpi::shmpi_in_place, 0, &buffer, 0, N, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	std::printf("[%3d/%3d] : Allreduce Done\n", rank, nprocs);
+
+	// Validate result array
+	double error = 0.;
+	const auto correct = 0.5 * nprocs * (nprocs + 1);
+	for (std::size_t i = 0; i < N; i++) {
+		const auto diff = test_array.get()[i] - correct;
+		error = std::max(std::abs(diff), error);
+	}
+	std::printf("[%3d/%3d] : error = %e\n", rank, nprocs, error);
+	MPI_Barrier(MPI_COMM_WORLD);
 }
 
 int main(int argc, char** argv) {
@@ -51,6 +87,7 @@ int main(int argc, char** argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
 	allreduce_test_0(rank, nprocs);
+	allreduce_test_1_in_place(rank, nprocs);
 
 	MPI_Finalize();
 }
