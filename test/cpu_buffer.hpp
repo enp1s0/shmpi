@@ -25,15 +25,15 @@ public:
 		return data[buffer_id].get();
 	}
 
-	void read_from_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
+	void read_from_device(const unsigned buffer_id, const std::size_t mem_offset, const std::size_t count, const std::size_t buffer_offset) {
 		for (std::size_t i = 0; i < count; i++) {
-			data[buffer_id].get()[i] = org_ptr[offset + i];
+			data[buffer_id].get()[i + buffer_offset] = org_ptr[mem_offset + i];
 		}
 	}
 
-	void write_to_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
+	void write_to_device(const unsigned buffer_id, const std::size_t mem_offset, const std::size_t count, const std::size_t buffer_offset) {
 		for (std::size_t i = 0; i < count; i++) {
-			org_ptr[offset + i] = data[buffer_id].get()[i];
+			org_ptr[mem_offset + i] = data[buffer_id].get()[i + buffer_offset];
 		}
 	}
 
