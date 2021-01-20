@@ -7,10 +7,9 @@ int shmpi::shmpi_send (
 		const MPI_Datatype data_type,
 		const int dest,
 		const int tag,
-		MPI_Comm comm,
-		const std::size_t buffer_count_arg
+		MPI_Comm comm
 		) {
-	const auto buffer_count = buffer_count_arg == 0 ? buffer->get_buffer_count() : buffer_count_arg;
+	const auto buffer_count = buffer->get_buffer_count();
 	if (count <= buffer_count) {
 		// In this case, this function uses buffer 0
 		buffer->read_from_device(0, offset_arg, count);
@@ -49,10 +48,9 @@ int shmpi::shmpi_recv (
 		const MPI_Datatype data_type,
 		const int source,
 		const int tag,
-		MPI_Comm comm,
-		const std::size_t buffer_count_arg
+		MPI_Comm comm
 		) {
-	const auto buffer_count = buffer_count_arg == 0 ? buffer->get_buffer_count() : buffer_count_arg;
+	const auto buffer_count = buffer->get_buffer_count();
 	if (count <= buffer_count) {
 		// In this case, this function uses buffer 0
 		const auto stat = MPI_Recv(buffer->get_ptr(0), count, data_type, source, tag, comm, MPI_STATUS_IGNORE);
