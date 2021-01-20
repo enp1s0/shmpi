@@ -8,7 +8,7 @@ TARGET=libshmpi.a
 
 all: $(TARGETDIR)/$(TARGET) test
 
-MODULES=send_recv.cpp allreduce.cpp
+MODULES=send_recv.cpp allreduce.cpp alltoall.cpp
 OBJECTS=$(MODULES:%.cpp=$(OBJDIR)/%.o)
 
 $(TARGETDIR)/$(TARGET):$(OBJECTS)
