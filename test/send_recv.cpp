@@ -2,43 +2,7 @@
 #include <cmath>
 #include <memory>
 #include <shmpi/shmpi.hpp>
-
-template <class T>
-class cpu_buffer : public shmpi::buffer {
-	std::unique_ptr<T[]> data[2];
-	T* org_ptr;
-public:
-	cpu_buffer(const std::size_t buffer_count) : shmpi::buffer(buffer_count) {}
-	int allocate() {
-		try {
-			data[0] = std::unique_ptr<T[]>(new T[shmpi::buffer::buffer_count]);
-			data[1] = std::unique_ptr<T[]>(new T[shmpi::buffer::buffer_count]);
-		} catch(const std::exception& e) {
-			return 1;
-		}
-		return 0;
-	}
-
-	void* get_ptr(const unsigned buffer_id) const {
-		return data[buffer_id].get();
-	}
-
-	void read_from_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
-		for (std::size_t i = 0; i < count; i++) {
-			data[buffer_id].get()[i] = org_ptr[offset + i];
-		}
-	}
-
-	void write_to_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
-		for (std::size_t i = 0; i < count; i++) {
-			org_ptr[offset + i] = data[buffer_id].get()[i];
-		}
-	}
-
-	void set_org_ptr(T* const p) {
-		org_ptr = p;
-	}
-};
+#include "cpu_buffer.hpp"
 
 constexpr std::size_t N = 1lu << 30;
 constexpr std::size_t buffer_size = 1lu << 20;
@@ -62,7 +26,7 @@ int main(int argc, char** argv) {
 	std::unique_ptr<double[]> test_array(new double [N]);
 
 	std::printf("[%d/%d]: Allocating shmpi buffer\n", rank, nprocs);
-	cpu_buffer<double> buffer(buffer_size);
+	mtk::test::cpu_buffer<double> buffer(buffer_size);
 	buffer.allocate();
 	buffer.set_org_ptr(test_array.get());
 
