@@ -24,7 +24,7 @@ public:
 	std::size_t get_buffer_count() const {return buffer_count;}
 };
 
-static const shmpi::buffer* shmpi_in_place = reinterpret_cast<shmpi::buffer*>(1lu);
+static shmpi::buffer* const shmpi_in_place = reinterpret_cast<shmpi::buffer*>(1lu);
 
 int shmpi_send(
 		shmpi::buffer* const buffer,
