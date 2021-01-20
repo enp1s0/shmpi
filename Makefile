@@ -6,7 +6,7 @@ TARGETDIR=lib
 TESTDIR=test
 TARGET=libshmpi.a
 
-all: $(TARGETDIR)/$(TARGET)
+all: $(TARGETDIR)/$(TARGET) test
 
 MODULES=send_recv.cpp allreduce.cpp
 OBJECTS=$(MODULES:%.cpp=$(OBJDIR)/%.o)
@@ -19,11 +19,11 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	[ -d "$(OBJDIR)" ] || mkdir $(OBJDIR)
 	$(CXX) $+ $(CXXFLAGS) -o $@ -c
 
-TESTSRCS=send_recv.cpp
+TESTSRCS=send_recv.cpp allreduce.cpp
 TESTS=$(TESTSRCS:%.cpp=$(TESTDIR)/%.test)
-test: $(TARGETDIR)/$(TARGET) $(TESTS)
+test: $(TESTS)
 
-$(TESTDIR)/%.test: $(TESTDIR)/%.cpp
+$(TESTDIR)/%.test: $(TESTDIR)/%.cpp $(TARGETDIR)/$(TARGET)
 	$(CXX) $+ $(CXXFLAGS) -o $@ -L./$(TARGETDIR) -lshmpi -lmpi
 
 clean:
