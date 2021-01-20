@@ -45,7 +45,9 @@ int main(int argc, char** argv) {
 	cl_queue.enqueueWriteBuffer(cl_buffer, true, 0, N * sizeof(double), test_array.get());
 
 	// initialize shmpi buffer
-	shmpi::opencl_buffer<double> buffer(buffer_count, cl_buffer, cl_queue);
+	shmpi::opencl_buffer<double> buffer(buffer_count, cl_queue);
+	buffer.allocate();
+	buffer.set_cl_buffer(&cl_buffer);
 
 	// allreduce
 	std::printf("[%3d/%3d] : Start Allreduce\n", rank, nprocs);
