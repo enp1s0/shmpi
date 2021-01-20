@@ -6,6 +6,10 @@ This is a library for small host heterogeneous environment.
 - MPI (We tests with Open MPI)
 - C++ >= 11
 
+## Supported functions
+- Send/Recv
+- Allreduce (also `MPI_IN_PLACE`(`shmpi::shmpi_in_place`))
+
 ## Installation and usage
 1. Clone this repository
 ```

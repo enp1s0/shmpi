@@ -24,6 +24,8 @@ public:
 	std::size_t get_buffer_count() const {return buffer_count;}
 };
 
+static shmpi::buffer* const shmpi_in_place = reinterpret_cast<shmpi::buffer*>(1lu);
+
 int shmpi_send(
 		shmpi::buffer* const buffer,
 		const std::size_t offset,
@@ -31,8 +33,7 @@ int shmpi_send(
 		const MPI_Datatype data_type,
 		const int dest,
 		const int tag,
-		MPI_Comm comm,
-		const std::size_t buffer_count_arg = 0u
+		MPI_Comm comm
 		);
 
 int shmpi_recv(
@@ -42,8 +43,18 @@ int shmpi_recv(
 		const MPI_Datatype data_type,
 		const int dest,
 		const int tag,
-		MPI_Comm comm,
-		const std::size_t buffer_count_arg = 0u
+		MPI_Comm comm
+		);
+
+int shmpi_allreduce(
+		shmpi::buffer* const send_buffer,
+		const std::size_t offset_send,
+		shmpi::buffer* const recv_buffer,
+		const std::size_t offset_recv,
+		const std::size_t count,
+		const MPI_Datatype data_type,
+		const MPI_Op op,
+		MPI_Comm comm
 		);
 } // namespace shmpi
 #endif
