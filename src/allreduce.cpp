@@ -29,6 +29,11 @@ int shmpi::shmpi_allreduce(
 		return MPI_SUCCESS;
 	}
 
+	// When send_buffer == in_place, call recursively
+	if (send_buffer == shmpi::shmpi_in_place) {
+		return shmpi::shmpi_allreduce(recv_buffer, offset_recv, recv_buffer, offset_recv, count, data_type, op, mpi_comm);
+	}
+
 	// Read first buffer
 	send_buffer->read_from_device(0, offset_send, buffer_count);
 	std::size_t b = 0;
@@ -42,7 +47,12 @@ int shmpi::shmpi_allreduce(
 		// Allreduce and write
 		auto send_ptr = send_buffer->get_ptr(b % 2);
 		auto recv_ptr = recv_buffer->get_ptr(b % 2);
-		const auto stat = MPI_Allreduce(send_ptr, recv_ptr, buffer_count, data_type, op, mpi_comm);
+		int stat;
+		if (send_ptr == recv_ptr) {
+			stat = MPI_Allreduce(MPI_IN_PLACE, recv_ptr, buffer_count, data_type, op, mpi_comm);
+		} else {
+			stat = MPI_Allreduce(send_ptr, recv_ptr, buffer_count, data_type, op, mpi_comm);
+		}
 		if (stat != MPI_SUCCESS) {
 			return stat;
 		}
@@ -55,7 +65,12 @@ int shmpi::shmpi_allreduce(
 	// Allreduce and write
 	auto send_ptr = send_buffer->get_ptr(b % 2);
 	auto recv_ptr = recv_buffer->get_ptr(b % 2);
-	const auto stat = MPI_Allreduce(send_ptr, recv_ptr, buffer_count, data_type, op, mpi_comm);
+	int stat;
+	if (send_ptr == recv_ptr) {
+		stat = MPI_Allreduce(MPI_IN_PLACE, recv_ptr, buffer_count, data_type, op, mpi_comm);
+	} else {
+		stat = MPI_Allreduce(send_ptr, recv_ptr, buffer_count, data_type, op, mpi_comm);
+	}
 	if (stat != MPI_SUCCESS) {
 		return stat;
 	}
