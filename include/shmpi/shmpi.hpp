@@ -56,5 +56,17 @@ int shmpi_allreduce(
 		const MPI_Op op,
 		MPI_Comm comm
 		);
+
+int shmpi_alltoall(
+		shmpi::buffer* const send_buffer,
+		const std::size_t offset_send,
+		const std::size_t send_count,
+		MPI_Datatype send_type,
+		shmpi::buffer* const recv_buffer,
+		const std::size_t offset_recv,
+		const std::size_t recv_count,
+		MPI_Datatype recv_type,
+		MPI_Comm comm
+		);
 } // namespace shmpi
 #endif
