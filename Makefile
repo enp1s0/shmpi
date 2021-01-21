@@ -20,11 +20,18 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $+ $(CXXFLAGS) -o $@ -c
 
 TESTSRCS=send_recv.cpp allreduce.cpp
+# The tests below need nvcc to compile.
+#TESTSRCS+=opencl_buffer.cpp
 TESTS=$(TESTSRCS:%.cpp=$(TESTDIR)/%.test)
 test: $(TESTS)
 
 $(TESTDIR)/%.test: $(TESTDIR)/%.cpp $(TARGETDIR)/$(TARGET)
 	$(CXX) $+ $(CXXFLAGS) -o $@ -L./$(TARGETDIR) -lshmpi -lmpi
+
+NVCC=nvcc
+NVCCFLAGS=-std=c++11 -I./include -lOpenCL
+$(TESTDIR)/opencl_buffer.test: $(TESTDIR)/opencl_buffer.cpp $(TARGETDIR)/$(TARGET)
+	$(NVCC) $+ $(NVCCFLAGS) -o $@ -L./$(TARGETDIR) -lshmpi -lmpi
 
 clean:
 	rm -rf $(OBJDIR)
