@@ -20,7 +20,8 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $+ $(CXXFLAGS) -o $@ -c
 
 TESTSRCS=send_recv.cpp allreduce.cpp
-TESTSRCS+=opencl_buffer.cpp
+# The tests below need nvcc to compile.
+#TESTSRCS+=opencl_buffer.cpp
 TESTS=$(TESTSRCS:%.cpp=$(TESTDIR)/%.test)
 test: $(TESTS)
 
