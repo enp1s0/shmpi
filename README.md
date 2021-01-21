@@ -28,7 +28,11 @@ cd shmpi
 make
 ```
 
-3. Link to your program
+3. Write a code
+
+See [test](./test) directory, for example.
+
+4. Compile
 ```
 g++ -I/path/to/shmpi/include -L/path/to/shmpi/lib -lshmpi ...
 ```
