@@ -2,6 +2,8 @@
 
 This is a MPI wrapper framework for small host heterogeneous environment.
 
+![shmpi](./docs/shmpi.png)
+
 ## Requirements
 - MPI (We tests with Open MPI)
 - C++ >= 11
