@@ -55,6 +55,7 @@ int shmpi::shmpi_allreduce(
 			stat = MPI_Allreduce(send_ptr, recv_ptr, buffer_count, data_type, op, mpi_comm);
 		}
 		if (stat != MPI_SUCCESS) {
+			read_next_buffer_thread.join();
 			return stat;
 		}
 		recv_buffer->write_to_device(b % 2, offset_recv + b * buffer_count, buffer_count);
