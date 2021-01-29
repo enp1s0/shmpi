@@ -30,9 +30,9 @@ void alltoall_test_0(const std::size_t N, const std::size_t buffer_count, const 
 	}
 
 	// Call alltoall
-	std::printf("[%3d/%3d] : Start Allreduce\n", rank, nprocs);
+	std::printf("[%3d/%3d] : Start Alltoall\n", rank, nprocs);
 	const auto stat = shmpi::shmpi_alltoall(&send_buffer, 0, N / nprocs, MPI_DOUBLE, &recv_buffer, 0, N / nprocs, MPI_DOUBLE, MPI_COMM_WORLD);
-	std::printf("[%3d/%3d] : Allreduce Done {stat = %d}\n", rank, nprocs, stat);
+	std::printf("[%3d/%3d] : Alltoall Done {stat = %d}\n", rank, nprocs, stat);
 
 	// Validate result array
 	double error = 0.;
@@ -64,9 +64,9 @@ void alltoall_test_1_in_place(const std::size_t N, const std::size_t buffer_coun
 	}
 
 	// Call alltoall
-	std::printf("[%3d/%3d] : Start Allreduce\n", rank, nprocs);
+	std::printf("[%3d/%3d] : Start Alltoall\n", rank, nprocs);
 	shmpi::shmpi_alltoall(shmpi::shmpi_in_place, 0, N / nprocs, MPI_DOUBLE, &buffer, 0, N / nprocs, MPI_DOUBLE, MPI_COMM_WORLD);
-	std::printf("[%3d/%3d] : Allreduce Done\n", rank, nprocs);
+	std::printf("[%3d/%3d] : Alltoall Done\n", rank, nprocs);
 
 	// Validate result array
 	double error = 0.;
