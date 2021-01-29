@@ -10,7 +10,7 @@ This is a MPI wrapper framework for small host heterogeneous environment.
 - pthread
 
 ## Supported functions
-- Send/Recv
+- Send/Recv/Sendrecv
 - Allreduce (also `MPI_IN_PLACE`(`shmpi::shmpi_in_place`))
 
 ## Supported devices/platforms
