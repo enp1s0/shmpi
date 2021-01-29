@@ -82,6 +82,7 @@ int shmpi::shmpi_alltoall(
 			comm
 			);
 		if (stat != MPI_SUCCESS) {
+			read_next_buffer_thread.join();
 			return stat;
 		}
 
