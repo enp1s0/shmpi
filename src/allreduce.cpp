@@ -40,7 +40,8 @@ int shmpi::shmpi_allreduce(
 	for (; b < count / buffer_count - 1; b++) {
 		// Read next buffer
 		const auto read_next_buffer_func = [=]() {
-			send_buffer->read_from_device(1 - (b % 2), offset_send + (b + 1) * buffer_count, buffer_count);
+			const auto real_buffer_count = count - (b + 1) * buffer_count;
+			send_buffer->read_from_device(1 - (b % 2), offset_send + (b + 1) * buffer_count, real_buffer_count);
 		};
 		std::thread read_next_buffer_thread(read_next_buffer_func);
 
@@ -74,7 +75,9 @@ int shmpi::shmpi_allreduce(
 	if (stat != MPI_SUCCESS) {
 		return stat;
 	}
-	recv_buffer->write_to_device(b % 2, offset_recv + b * buffer_count, buffer_count);
+
+	const auto real_buffer_count = count - b * buffer_count;
+	recv_buffer->write_to_device(b % 2, offset_recv + b * buffer_count, real_buffer_count);
 
 	return MPI_SUCCESS;
 }
