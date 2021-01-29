@@ -154,7 +154,8 @@ int shmpi::shmpi_sendrecv(
 			comm,
 			MPI_STATUS_IGNORE
 			);
-		if (stat == MPI_SUCCESS) {
+		if (stat != MPI_SUCCESS) {
+			read_next_buffer_thread.join();
 			return stat;
 		}
 
