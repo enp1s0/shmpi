@@ -4,15 +4,16 @@
 #include <shmpi/shmpi.hpp>
 #include "cpu_buffer.hpp"
 
-constexpr std::size_t N = 1lu << 5;
-constexpr std::size_t buffer_size = 1lu << 2;
+constexpr std::size_t N = 1lu << 25;
+constexpr std::size_t buffer_size = 1lu << 15;
 
 void test_0(const std::size_t N, const std::size_t buffer_size, const int rank, const int nprocs) {
 	if (rank == 0) {
-		std::printf("# test   : %s\n", __FILE__);
+		std::printf("# test   : %s / %s\n", __FILE__, __func__);
 		std::printf("# N      : %lu\n", N);
 		std::printf("# Buffer : %lu\n", buffer_size);
 	}
+	MPI_Barrier(MPI_COMM_WORLD);
 
 	std::printf("[%d/%d]: Allocating test array\n", rank, nprocs);
 	std::unique_ptr<double[]> send_array(new double [N]);
@@ -32,7 +33,7 @@ void test_0(const std::size_t N, const std::size_t buffer_size, const int rank, 
 	}
 
 	std::printf("[%d/%d]: Call sendrecv\n", rank, nprocs);
-	shmpi::shmpi_sendrecv(
+	const auto stat = shmpi::shmpi_sendrecv(
 		&send_buffer,
 		0,
 		N,
@@ -47,7 +48,7 @@ void test_0(const std::size_t N, const std::size_t buffer_size, const int rank, 
 		0,
 		MPI_COMM_WORLD
 		);
-	std::printf("[%d/%d]: sendrecv done\n", rank, nprocs);
+	std::printf("[%d/%d]: sendrecv done {stat = %d}\n", rank, nprocs, stat);
 
 	double max_error = 0.;
 	const auto correct = static_cast<double>((nprocs + rank - 1) % nprocs);
@@ -66,8 +67,9 @@ int main(int argc, char** argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-	test_0(buffer_size / 2, buffer_size, rank, nprocs);
-	test_0(N, buffer_size, rank, nprocs);
+	test_0(buffer_size / 2	, buffer_size, rank, nprocs);
+	test_0(N				, buffer_size, rank, nprocs);
+	test_0(N + N / 2		, buffer_size, rank, nprocs);
 
 	MPI_Finalize();
 }
