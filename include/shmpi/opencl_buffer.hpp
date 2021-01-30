@@ -26,13 +26,13 @@ public:
 		return data[buffer_id].get();
 	}
 
-	void read_from_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
-		cl_queue.enqueueReadBuffer(*cl_buffer, true, sizeof(T) * offset, sizeof(T) * count, data[buffer_id].get());
+	void read_from_device(const unsigned buffer_id, const std::size_t mem_offset, const std::size_t count, const std::size_t buffer_offset) {
+		cl_queue.enqueueReadBuffer(*cl_buffer, true, sizeof(T) * mem_offset, sizeof(T) * count, data[buffer_id].get() + buffer_offset);
 		cl_queue.finish();
 	}
 
-	void write_to_device(const unsigned buffer_id, const std::size_t offset, const std::size_t count) {
-		cl_queue.enqueueWriteBuffer(*cl_buffer, true, sizeof(T) * offset, sizeof(T) * count, data[buffer_id].get());
+	void write_to_device(const unsigned buffer_id, const std::size_t mem_offset, const std::size_t count, const std::size_t buffer_offset) {
+		cl_queue.enqueueWriteBuffer(*cl_buffer, true, sizeof(T) * mem_offset, sizeof(T) * count, data[buffer_id].get() + buffer_offset);
 		cl_queue.finish();
 	}
 
