@@ -29,9 +29,6 @@ int shmpi::shmpi_alltoall(
 	int nprocs;
 	MPI_Comm_size(comm, &nprocs);
 
-	int rank;
-	MPI_Comm_rank(comm, &rank);
-
 	const auto buffer_count = (send_buffer == shmpi::shmpi_in_place) ? recv_buffer->get_buffer_count() : std::min(send_buffer->get_buffer_count(), recv_buffer->get_buffer_count());
 	const auto data_count = send_count * nprocs;
 
