@@ -2,7 +2,7 @@
 #define __MTK_SHMPI_OPENCL_BUFFER__
 #include <memory>
 #include <CL/cl.hpp>
-#include "shmpi.hpp"
+#include "buffer.hpp"
 
 namespace shmpi {
 template <class T>
