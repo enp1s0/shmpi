@@ -181,7 +181,7 @@ int shmpi::shmpi_sendrecv(
 		comm,
 		MPI_STATUS_IGNORE
 		);
-	if (stat == MPI_SUCCESS) {
+	if (stat != MPI_SUCCESS) {
 		return stat;
 	}
 

@@ -31,8 +31,8 @@ void allreduce_test_0(const std::size_t N, const std::size_t buffer_count, const
 
 	// Call allreduce
 	std::printf("[%3d/%3d] : Start Allreduce\n", rank, nprocs);
-	shmpi::shmpi_allreduce(&send_buffer, 0, &recv_buffer, 0, N, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-	std::printf("[%3d/%3d] : Allreduce Done\n", rank, nprocs);
+	const auto stat = shmpi::shmpi_allreduce(&send_buffer, 0, &recv_buffer, 0, N, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	std::printf("[%3d/%3d] : Allreduce Done {stat = %d}\n", rank, nprocs, stat);
 
 	// Validate result array
 	double error = 0.;
@@ -86,10 +86,12 @@ int main(int argc, char** argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-	allreduce_test_0(N, buffer_count, rank, nprocs);
-	allreduce_test_0(buffer_count / 2, buffer_count, rank, nprocs);
-	allreduce_test_1_in_place(N, buffer_count, rank, nprocs);
-	allreduce_test_1_in_place(buffer_count / 2, buffer_count, rank, nprocs);
+	allreduce_test_0(N					, buffer_count, rank, nprocs);
+	allreduce_test_0(N + N / 2			, buffer_count, rank, nprocs);
+	allreduce_test_0(buffer_count / 2	, buffer_count, rank, nprocs);
+	allreduce_test_1_in_place(N					, buffer_count, rank, nprocs);
+	allreduce_test_1_in_place(N + N /2			, buffer_count, rank, nprocs);
+	allreduce_test_1_in_place(buffer_count / 2	, buffer_count, rank, nprocs);
 
 	MPI_Finalize();
 }
